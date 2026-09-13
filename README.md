@@ -18,10 +18,11 @@ Paste in free text, or upload a PDF, Word doc, or notes file. GenAI-Structify in
 
 ```bash
 # 1. Install Ollama and pull a model (one-time setup)
-#    https://ollama.com
+#    Linux:
+curl -fsSL https://ollama.com/install.sh | sh
+#    macOS / Windows: download from https://ollama.com
 ollama pull llama3.1
-ollama serve
-
+ollama serve   # if you get "address already in use", it's already running — skip this
 # 2. Clone and enter the project
 git clone https://github.com/Majd2404/genai-structify.git
 cd genai-structify
