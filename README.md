@@ -9,7 +9,7 @@ Paste in free text, or upload a PDF, Word doc, or notes file. GenAI-Structify in
   <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
   <img alt="Local LLM" src="https://img.shields.io/badge/LLM-Ollama%20(local)-orange">
   <img alt="Tests" src="https://img.shields.io/badge/tests-passing-brightgreen">
-  <a href="https://github.com/<your-username>/genai-structify/actions"><img alt="CI" src="https://github.com/<your-username>/genai-structify/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/Majd2404/genai-structify/actions"><img alt="CI" src="https://github.com/Majd2404/genai-structify/actions/workflows/ci.yml/badge.svg"></a>
 </p>
 
 ---
@@ -23,7 +23,7 @@ ollama pull llama3.1
 ollama serve
 
 # 2. Clone and enter the project
-git clone https://github.com/<your-username>/genai-structify.git
+git clone https://github.com/Majd2404/genai-structify.git
 cd genai-structify
 
 # 3. Create + activate a virtual environment (avoids "externally-managed-environment" errors)
