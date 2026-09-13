@@ -1,0 +1,15 @@
+Meeting notes - vendor follow-ups, various dates
+
+Called Acme Logistics on March 3rd about the late shipment (INV-2291). John said
+they'd resend by March 10. Status: pending, amount owed $4,250.
+
+Talked to Nora at BrightPay re: invoice #INV-2305, paid in full on 2026-02-14,
+$1,200.00. No issues.
+
+Follow up needed: Global Parts Co, invoice INV-2310, amount $980, overdue since
+Jan 28 2026. Left voicemail, no response yet. Contact: Mike Chen.
+
+BrightPay again - second invoice INV-2318 for $560, due March 20, not yet paid,
+contact still Nora.
+
+Acme Logistics settled INV-2291 on March 12, confirmed by email. Amount $4,250.
