@@ -21,7 +21,7 @@ Paste in free text, or upload a PDF, Word doc, or notes file. GenAI-Structify in
 #    Linux:
 curl -fsSL https://ollama.com/install.sh | sh
 #    macOS / Windows: download from https://ollama.com
-ollama pull llama3.1
+ollama pull llama3.2:1b
 ollama serve   # if you get "address already in use", it's already running — skip this
 # 2. Clone and enter the project
 git clone https://github.com/Majd2404/genai-structify.git
@@ -146,7 +146,7 @@ Output — a clean spreadsheet with an inferred schema like:
 1. **Install [Ollama](https://ollama.com)** (macOS, Linux, Windows) and pull a model:
 
    ```bash
-   ollama pull llama3.1
+   ollama pull llama3.2:1b
    ollama serve   # usually already running as a background service after install
    ```
 
@@ -274,7 +274,7 @@ Tests cover chunking/overlap behavior, cross-chunk deduplication, and Excel outp
 ## Known limitations / roadmap
 
 - **Scanned/image PDFs aren't supported yet** — only text-layer PDFs. OCR (via Tesseract) is the next planned input type.
-- **Local models are noticeably less reliable at strict JSON output** than hosted frontier models — the retry-once logic in `llm_client.py` exists specifically to compensate for this. Larger local models (e.g. `llama3.1:70b`) or a hosted API can be swapped in via a small edit to `llm_client.py` if extraction quality matters more than running cost-free.
+- **Local models are noticeably less reliable at strict JSON output** than hosted frontier models — the retry-once logic in `llm_client.py` exists specifically to compensate for this. Larger local models (e.g. `llama3.2:1b:70b`) or a hosted API can be swapped in via a small edit to `llm_client.py` if extraction quality matters more than running cost-free.
 - Extraction quality depends on how clearly the source data expresses repeated structure — free-flowing prose extracts less reliably than semi-structured notes/logs.
 - No per-chunk progress bar yet in the Streamlit UI for very large documents (just a spinner).
 

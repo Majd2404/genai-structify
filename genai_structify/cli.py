@@ -38,7 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Path to a JSON file describing the schema to use, skipping inference",
     )
     parser.add_argument(
-        "--model", default="llama3.1", help="Ollama model name to use for extraction"
+        "--model", default="llama3.2:1b", help="Ollama model name to use for extraction"
     )
     return parser
 
