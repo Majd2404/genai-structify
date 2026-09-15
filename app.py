@@ -37,7 +37,7 @@ if "rows" not in st.session_state:
 
 with st.sidebar:
     st.subheader("Settings")
-    model = st.text_input("Ollama model", value="llama3.2:1b")
+    model = st.text_input("Ollama model", value="gemma2:2b")
     host = st.text_input("Ollama host", value="http://localhost:11434")
     st.caption("Requires Ollama running locally: `ollama serve`")
     st.caption(

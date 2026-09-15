@@ -6,7 +6,7 @@ specific model runtime directly -- swapping to a different local model,
 or back to a hosted API, means editing exactly one file.
 
 Requires Ollama running locally: https://ollama.com
-    ollama pull llama3.2:1b
+    ollama pull gemma2:2b
     ollama serve   (usually already running as a background service)
 """
 
@@ -23,7 +23,7 @@ class LLMError(RuntimeError):
 
 
 class LLMClient:
-    def __init__(self, model: str = "llama3.2:1b", host: str | None = None, timeout: int = 120):
+    def __init__(self, model: str = "gemma2:2b", host: str | None = None, timeout: int = 120):
         self.model = model
         self.host = (host or os.environ.get("OLLAMA_HOST") or "http://localhost:11434").rstrip("/")
         self.timeout = timeout

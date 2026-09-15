@@ -21,7 +21,7 @@ Paste in free text, or upload a PDF, Word doc, or notes file. GenAI-Structify in
 #    Linux:
 curl -fsSL https://ollama.com/install.sh | sh
 #    macOS / Windows: download from https://ollama.com
-ollama pull llama3.2:1b
+ollama pull gemma2:2b
 ollama serve   # if you get "address already in use", it's already running — skip this
 
 # 2. Clone and enter the project
@@ -159,7 +159,7 @@ Output — a clean spreadsheet with an inferred schema like:
    **Then, on any OS:**
 
    ```bash
-   ollama pull llama3.2:1b
+   ollama pull gemma2:2b
    ollama serve   # if you get "address already in use", it's already running — skip this
    ```
 
@@ -288,6 +288,7 @@ Tests cover chunking/overlap behavior, cross-chunk deduplication, and Excel outp
 
 - **Scanned/image PDFs aren't supported yet** — only text-layer PDFs. OCR (via Tesseract) is the next planned input type.
 - **Very small local models (1-2B params) often fail at schema *design*, not just extraction.** In testing with `llama3.2:1b`, schema inference sometimes proposed one field per topic/entity mentioned in the document (e.g. `acme_logistics`, `nora_updates`) instead of shared row-level columns (`vendor`, `amount`, `status`) — which makes extraction impossible and silently returns 0 rows. The schema-inference prompt has been tightened with an explicit right/wrong example to reduce this, and extraction failures are now surfaced as warnings instead of failing silently — but manually reviewing (or rewriting) the proposed schema before extracting is still recommended with small models. Models in the 7B+ range are noticeably more reliable at both steps.
+- **Even with a correct schema, 1B models can under-extract.** In one test, `llama3.2:1b` was given a clean, correct schema and a 5-record document, but collapsed everything into a single unwrapped record instead of an array of five. The automatic recovery logic (see `_normalize_to_row_list` in `extractor.py`) rescued that one record instead of discarding it, but it can't invent the other four — it can only recover what the model actually returned. `gemma2:2b` is the current default specifically because it's noticeably better at enumerating multiple records per chunk while still running comfortably on machines with limited RAM (~2GB). Models below ~2B parameters should be considered a "may need retries or a bigger model" tier, not a reliable default.
 - **Local models are noticeably less reliable at strict JSON output** than hosted frontier models — the retry-once logic in `llm_client.py` exists specifically to compensate for this. Larger local models (e.g. `llama3.1:70b`) or a hosted API can be swapped in via a small edit to `llm_client.py` if extraction quality matters more than running cost-free.
 - Extraction quality depends on how clearly the source data expresses repeated structure — free-flowing prose extracts less reliably than semi-structured notes/logs.
 - No per-chunk progress bar yet in the Streamlit UI for very large documents (just a spinner).
