@@ -45,9 +45,45 @@ def test_extract_rows_deduplicates_across_chunks():
         ]
     )
     long_text = "x" * (12000 + 100)  # forces 2 chunks at default CHUNK_SIZE
-    rows = extract_rows(fake, long_text, schema)
+    rows, warnings = extract_rows(fake, long_text, schema)
     names = sorted(r["name"] for r in rows)
     assert names == ["Alice", "Bob", "Carol"]
+    assert warnings == []
+
+
+def test_extract_rows_warns_when_model_returns_non_list():
+    schema = Schema(
+        fields=[Field(name="name", type="string", description="")],
+        sheet_name="Data",
+    )
+    fake = FakeLLMClient([{"unrelated_key": "no schema fields here"}])
+    rows, warnings = extract_rows(fake, "short text", schema)
+    assert rows == []
+    assert len(warnings) == 1
+    assert "no usable rows" in warnings[0]
+
+
+def test_extract_rows_recovers_single_dict_matching_schema():
+    schema = Schema(
+        fields=[Field(name="name", type="string", description="")],
+        sheet_name="Data",
+    )
+    # Small models sometimes return one unwrapped object instead of an array.
+    fake = FakeLLMClient([{"name": "Alice"}])
+    rows, warnings = extract_rows(fake, "short text", schema)
+    assert rows == [{"name": "Alice"}]
+    assert "recovered automatically" in warnings[0]
+
+
+def test_extract_rows_recovers_common_wrapper_keys():
+    schema = Schema(
+        fields=[Field(name="name", type="string", description="")],
+        sheet_name="Data",
+    )
+    fake = FakeLLMClient([{"rows": [{"name": "Alice"}, {"name": "Bob"}]}])
+    rows, warnings = extract_rows(fake, "short text", schema)
+    assert sorted(r["name"] for r in rows) == ["Alice", "Bob"]
+    assert "recovered automatically" in warnings[0]
 
 
 def test_write_excel_creates_file_with_expected_headers(tmp_path):

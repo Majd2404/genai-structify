@@ -40,6 +40,10 @@ with st.sidebar:
     model = st.text_input("Ollama model", value="llama3.2:1b")
     host = st.text_input("Ollama host", value="http://localhost:11434")
     st.caption("Requires Ollama running locally: `ollama serve`")
+    st.caption(
+        "Small models (1-2B) may need manual schema edits or produce fewer rows. "
+        "Larger models (7B+) generally give more reliable results."
+    )
 
 uploaded_file = st.file_uploader(
     "Upload a file", type=["txt", "md", "csv", "pdf", "docx"]
@@ -83,7 +87,7 @@ if st.session_state.schema:
         column_config={
             "type": st.column_config.SelectboxColumn(options=["string", "number", "date", "boolean"])
         },
-        use_container_width=True,
+        width="stretch",
     )
 
     sheet_name = st.text_input("Sheet name", value=st.session_state.schema.sheet_name)
@@ -95,7 +99,9 @@ if st.session_state.schema:
         try:
             with st.spinner("Extracting rows (this may take a while for long documents)..."):
                 client = LLMClient(model=model, host=host)
-                rows = extract_rows(client, st.session_state.text, schema)
+                rows, warnings = extract_rows(client, st.session_state.text, schema)
+                for warning in warnings:
+                    st.warning(warning)
                 st.session_state.rows = rows
                 st.session_state.final_schema = schema
         except LLMError as exc:
@@ -103,7 +109,7 @@ if st.session_state.schema:
 
 if st.session_state.rows is not None:
     st.subheader(f"Extracted {len(st.session_state.rows)} rows")
-    st.dataframe(pd.DataFrame(st.session_state.rows), use_container_width=True)
+    st.dataframe(pd.DataFrame(st.session_state.rows), width="stretch")
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp_out:
         write_excel(st.session_state.rows, st.session_state.final_schema, tmp_out.name)

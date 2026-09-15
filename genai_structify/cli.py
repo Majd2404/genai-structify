@@ -85,7 +85,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
 
         print("\nExtracting rows (this may take a moment for large inputs)...", file=sys.stderr)
-        rows = extract_rows(client, text, schema)
+        rows, warnings = extract_rows(client, text, schema)
+        for warning in warnings:
+            print(f"Warning: {warning}", file=sys.stderr)
         print(f"Extracted {len(rows)} rows.", file=sys.stderr)
 
         output_path = write_excel(rows, schema, args.output)

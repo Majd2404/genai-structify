@@ -23,6 +23,7 @@ curl -fsSL https://ollama.com/install.sh | sh
 #    macOS / Windows: download from https://ollama.com
 ollama pull llama3.2:1b
 ollama serve   # if you get "address already in use", it's already running — skip this
+
 # 2. Clone and enter the project
 git clone https://github.com/Majd2404/genai-structify.git
 cd genai-structify
@@ -143,17 +144,29 @@ Output — a clean spreadsheet with an inferred schema like:
 
 ## Installation
 
-1. **Install [Ollama](https://ollama.com)** (macOS, Linux, Windows) and pull a model:
+1. **Install [Ollama](https://ollama.com)** and pull a model:
+
+   **Linux:**
+
+   ```bash
+   curl -fsSL https://ollama.com/install.sh | sh
+   ```
+
+   > If `ollama` isn't found after installing, make sure the install script finished without errors and try opening a new terminal. Alternatively, `sudo snap install ollama` works too, though the snap package can lag behind on new model support.
+
+   **macOS / Windows:** download the installer from [ollama.com](https://ollama.com).
+
+   **Then, on any OS:**
 
    ```bash
    ollama pull llama3.2:1b
-   ollama serve   # usually already running as a background service after install
+   ollama serve   # if you get "address already in use", it's already running — skip this
    ```
 
 2. **Clone the project:**
 
    ```bash
-   git clone https://github.com/<your-username>/genai-structify.git
+   git clone https://github.com/Majd2404/genai-structify.git
    cd genai-structify
    ```
 
@@ -274,7 +287,8 @@ Tests cover chunking/overlap behavior, cross-chunk deduplication, and Excel outp
 ## Known limitations / roadmap
 
 - **Scanned/image PDFs aren't supported yet** — only text-layer PDFs. OCR (via Tesseract) is the next planned input type.
-- **Local models are noticeably less reliable at strict JSON output** than hosted frontier models — the retry-once logic in `llm_client.py` exists specifically to compensate for this. Larger local models (e.g. `llama3.2:1b:70b`) or a hosted API can be swapped in via a small edit to `llm_client.py` if extraction quality matters more than running cost-free.
+- **Very small local models (1-2B params) often fail at schema *design*, not just extraction.** In testing with `llama3.2:1b`, schema inference sometimes proposed one field per topic/entity mentioned in the document (e.g. `acme_logistics`, `nora_updates`) instead of shared row-level columns (`vendor`, `amount`, `status`) — which makes extraction impossible and silently returns 0 rows. The schema-inference prompt has been tightened with an explicit right/wrong example to reduce this, and extraction failures are now surfaced as warnings instead of failing silently — but manually reviewing (or rewriting) the proposed schema before extracting is still recommended with small models. Models in the 7B+ range are noticeably more reliable at both steps.
+- **Local models are noticeably less reliable at strict JSON output** than hosted frontier models — the retry-once logic in `llm_client.py` exists specifically to compensate for this. Larger local models (e.g. `llama3.1:70b`) or a hosted API can be swapped in via a small edit to `llm_client.py` if extraction quality matters more than running cost-free.
 - Extraction quality depends on how clearly the source data expresses repeated structure — free-flowing prose extracts less reliably than semi-structured notes/logs.
 - No per-chunk progress bar yet in the Streamlit UI for very large documents (just a spinner).
 
